@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Love Quiz</title>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  display:flex;
+  justify-content: center; 
+  align-items:flex-start;
+  padding:20px 50px 20px 20px;
+  background-image:
+    linear-gradient(rgba(0,100,0,0.55), rgba(0,100,0,0.55)),
+    url("https://picsum.photos/1080/1920");
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+}
+
+.container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    padding: 40px 60px;
+    border-radius: 25px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.4);
+}
+
+label {
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+    display: block;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+}
+
+select {
+    padding: 12px 25px;
+    font-size: 1.3rem;
+    border-radius: 15px;
+    border: 2px solid rgba(255,255,255,0.6);
+    outline: none;
+    cursor: pointer;
+    background: rgba(255,255,255,0.3);
+    color: #fff;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+select:hover {
+    background: rgba(255,255,255,0.6);
+    color: #ff4b5c;
+    transform: scale(1.05);
+}
+
+.images-wrapper {
+    position: relative;
+    width: 360px;
+    height: 260px;
+    margin-top: 35px;
+}
+
+.initial-img {
+    width: 160px;
+    height:190px;
+    position: absolute;
+    top: 30px;
+    border-radius: 20px;
+    object-fit: cover;
+    transition: all 1s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    border: 2px solid rgba(255,255,255,0.3);
+}
+
+.reaction-img {
+    width: 260px;
+    height: 220px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 25px;
+    object-fit: cover;
+    opacity: 0;
+    transition: all 1s ease;
+    z-index: 2;
+}
+
+#boy1 { left: 0; }
+#girl1 { right: 0; }
+
+#boy2 { left: 0; }
+#girl2 { right: 0; }
+
+#boy3 { left: 0; }
+#girl3 { right: 0; }
+
+.emoji {
+    position: absolute;
+    font-size: 24px;
+    animation: floatUp 2s linear forwards;
+    pointer-events: none;
+}
+
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-150px) scale(1.5); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- 1st Question -->
+    <div id="question1">
+        <label for="love">Kya aap mujhse pyar karti ho?</label>
+        <select id="love" onchange="showReaction('1')">
+            <option value="" disabled selected>Select your answer</option>
+            <option value="yes">Yes ❤️</option>
+            <option value="no">No 💔</option>
+        </select>
+
+        <div class="images-wrapper">
+            <img src="boy.png" id="boy1" class="initial-img">
+            <img src="girl.png" id="girl1" class="initial-img">
+            <img src="hug.png" id="hug1" class="reaction-img">
+            <img src="breakup.png" id="breakup1" class="reaction-img">
+        </div>
+    </div>
+
+    <!-- 2nd Question -->
+    <div id="question2" style="display:none; margin-top:30px;">
+        <label>
+        Waise seriously batao,<br> 
+        main tum par mahine ka<br>
+        kitna kharcha karne ke liye<br>
+        ready rahun?
+</label>
+
+        <select id="money" onchange="showReaction('2')">
+            <option value="" disabled selected>Select amount</option>
+            <option value="4000">4000</option>
+            <option value="5000">5000</option>
+        </select>
+
+        <div class="images-wrapper">
+            <img src="boy3.png" id="boy2" class="initial-img">
+            <img src="girl3.png" id="girl2" class="initial-img">
+            <img src="hug3.png" id="hug2" class="reaction-img">
+            <img src="break3.png" id="breakup2" class="reaction-img">
+        </div>
+    </div>
+
+    <!-- 3rd Question -->
+    <div id="question3" style="display:none; margin-top:30px;">
+        <label>Aap mere sath physical<br>
+                    hone ke liye taiyar hai?</label>
+        <select id="physical" onchange="showReaction('3')">
+            <option value="" disabled selected>Select</option>
+            <option value="yes">YES</option>
+            <option value="no">NO</option>
+        </select>
+
+        <div class="images-wrapper">
+            <img src="boy4.png" id="boy3" class="initial-img">
+            <img src="girl4.png" id="girl3" class="initial-img">
+            <img src="hug4.png" id="hug3" class="reaction-img">
+            <img src="break4.png" id="breakup3" class="reaction-img">
+        </div>
+    </div>
+
+</div>
+<!-- Final Message -->
+<div id="finalMessage" style="display:none; margin-top:30px; color:white; font-size:1.4rem; font-weight:bold; text-shadow:1px 1px 5px black;">
+🌅 जिंदगी के हर मोड़ पर तुम साथ रहना,<br>
+चाहे दूर रहो पर 🧡 हमेशा दिल के पास रहना! 💭<br><br>
+
+❤️‍🔥 दिल की धड़कन बन कर दिल में रहोंगे तुम,<br>
+जब तक साँस है 🫁 तब तक मेरे साथ रहोंगे तुम! 🤍
+</div>
+
+<script>
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+function showReaction(qNum) {
+    let boy, girl, hug, breakup, select, nextQuestion;
+
+    if(qNum === '1'){
+        boy = document.getElementById('boy1');
+        girl = document.getElementById('girl1');
+        hug = document.getElementById('hug1');
+        breakup = document.getElementById('breakup1');
+        select = document.getElementById('love');
+        nextQuestion = 'question2';
+    } else if(qNum === '2'){
+        boy = document.getElementById('boy2');
+        girl = document.getElementById('girl2');
+        hug = document.getElementById('hug2');
+        breakup = document.getElementById('breakup2');
+        select = document.getElementById('money');
+        nextQuestion = 'question3';
+        database.ref('loveQuiz').update({ monthlyBudget: select.value });
+    } else if(qNum === '3'){
+        boy = document.getElementById('boy3');
+        girl = document.getElementById('girl3');
+        hug = document.getElementById('hug3');
+        breakup = document.getElementById('breakup3');
+        select = document.getElementById('physical');
+        nextQuestion = null;
+        database.ref('loveQuiz').update({ physicalReady: select.value });
+    }
+
+    boy.style.left = '50%';
+    boy.style.transform = 'translateX(-60%) scale(0.7)';
+    girl.style.right = '50%';
+    girl.style.transform = 'translateX(60%) scale(0.7)';
+    boy.style.opacity = '0.8';
+    girl.style.opacity = '0.8';
+
+    setTimeout(() => {
+        if(qNum === '1' && select.value === 'yes' || qNum !== '1' && select.value && select.value !== '') {
+            hug.style.opacity = 1;
+            triggerEmoji('❤️');
+        } else {
+            breakup.style.opacity = 1;
+            triggerEmoji('💔');
+        }
+
+        boy.style.opacity = 0;
+        girl.style.opacity = 0;
+
+        if(qNum === '1'){
+            database.ref('loveQuiz').set({ answer: select.value, timestamp: Date.now() });
+        }
+
+        setTimeout(() => {
+            hug.style.opacity = 0;
+            breakup.style.opacity = 0;
+            if(nextQuestion){
+                document.getElementById(`question${qNum}`).style.display = 'none';
+                document.getElementById(nextQuestion).style.display = 'block';
+            } else {
+    document.getElementById(`question${qNum}`).style.display = 'none';
+    document.getElementById("finalMessage").style.display = 'block';
+}
+
+        }, 4000); // reaction stays visible for 4 seconds
+
+    }, 1000);
+}
+
+function triggerEmoji(symbol) {
+    const container = document.querySelector('.container');
+    for(let i=0; i<20; i++){
+        const emoji = document.createElement('div');
+        emoji.classList.add('emoji');
+        emoji.style.left = `${50 + Math.random()*60 - 30}%`;
+        emoji.style.top = `${150 + Math.random()*20}px`;
+        emoji.style.fontSize = `${20 + Math.random()*25}px`;
+        emoji.textContent = symbol;
+        container.appendChild(emoji);
+        setTimeout(() => emoji.remove(), 2000);
+    }
+}
+</script>
+
+</body>
+</html>
+

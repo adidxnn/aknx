@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Love Quiz Admin Panel</title>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+body{
+  background:#0f172a;
+  font-family:Arial;
+  color:white;
+  padding:20px;
+}
+h2{
+  text-align:center;
+}
+.card{
+  background:#1e293b;
+  padding:15px;
+  margin:12px 0;
+  border-radius:12px;
+  box-shadow:0 0 10px rgba(0,0,0,0.5);
+}
+</style>
+</head>
+
+<body>
+
+<h2>🔥 Love Quiz Admin Dashboard</h2>
+<div id="dataBox">Loading data...</div>
+
+<script>
+
+/* 🔥 SAME firebaseConfig use karo jo index.html me hai */
+const firebaseConfig = {
+ apiKey:"YOUR_API_KEY",
+ authDomain:"YOUR_PROJECT.firebaseapp.com",
+ databaseURL:"https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+ projectId:"YOUR_PROJECT"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const dataBox = document.getElementById("dataBox");
+
+/* 🔥 REALTIME DATA LISTENER */
+db.ref("loveQuiz").on("value",(snapshot)=>{
+
+  const data = snapshot.val();
+  dataBox.innerHTML="";
+
+  if(!data){
+    dataBox.innerHTML="No Answers Yet";
+    return;
+  }
+
+  Object.keys(data).reverse().forEach(key=>{
+
+    const user = data[key];
+
+    const div = document.createElement("div");
+    div.className="card";
+
+    div.innerHTML = `
+      🧑 Session: ${key}<br><br>
+      ❤️ Love Answer: ${user.answer || "-"}<br>
+      💰 Monthly Budget: ${user.monthlyBudget || "-"}<br>
+      🔥 Physical Ready: ${user.physicalReady || "-"}<br><br>
+      📱 Device: ${user.device || "-"}<br>
+      ⏰ Time: ${user.time || "-"}
+    `;
+
+    dataBox.appendChild(div);
+
+  });
+
+});
+</script>
+
+</body>
+</html>

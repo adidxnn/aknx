@@ -195,98 +195,94 @@ select:hover {
 <script>
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT"
 };
 
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+/* 🔥 UNIQUE SESSION BANANA */
+const sessionId = "user_" + Date.now();
+
+/* 🔥 DEVICE NAME */
+const device = navigator.userAgent;
+
 function showReaction(qNum) {
+
     let boy, girl, hug, breakup, select, nextQuestion;
 
     if(qNum === '1'){
-        boy = document.getElementById('boy1');
-        girl = document.getElementById('girl1');
-        hug = document.getElementById('hug1');
-        breakup = document.getElementById('breakup1');
-        select = document.getElementById('love');
+        boy = boy1; girl = girl1;
+        hug = hug1; breakup = breakup1;
+        select = love;
         nextQuestion = 'question2';
-    } else if(qNum === '2'){
-        boy = document.getElementById('boy2');
-        girl = document.getElementById('girl2');
-        hug = document.getElementById('hug2');
-        breakup = document.getElementById('breakup2');
-        select = document.getElementById('money');
+    }
+    else if(qNum === '2'){
+        boy = boy2; girl = girl2;
+        hug = hug2; breakup = breakup2;
+        select = money;
         nextQuestion = 'question3';
-        database.ref('loveQuiz').update({ monthlyBudget: select.value });
-    } else if(qNum === '3'){
-        boy = document.getElementById('boy3');
-        girl = document.getElementById('girl3');
-        hug = document.getElementById('hug3');
-        breakup = document.getElementById('breakup3');
-        select = document.getElementById('physical');
+
+        database.ref('loveQuiz/'+sessionId).update({
+            monthlyBudget: select.value
+        });
+    }
+    else if(qNum === '3'){
+        boy = boy3; girl = girl3;
+        hug = hug3; breakup = breakup3;
+        select = physical;
         nextQuestion = null;
-        database.ref('loveQuiz').update({ physicalReady: select.value });
+
+        database.ref('loveQuiz/'+sessionId).update({
+            physicalReady: select.value,
+            device: device,
+            time: new Date().toLocaleString()
+        });
     }
 
-    boy.style.left = '50%';
-    boy.style.transform = 'translateX(-60%) scale(0.7)';
-    girl.style.right = '50%';
-    girl.style.transform = 'translateX(60%) scale(0.7)';
-    boy.style.opacity = '0.8';
-    girl.style.opacity = '0.8';
+    boy.style.opacity=0;
+    girl.style.opacity=0;
 
-    setTimeout(() => {
-        if(qNum === '1' && select.value === 'yes' || qNum !== '1' && select.value && select.value !== '') {
-            hug.style.opacity = 1;
-            triggerEmoji('❤️');
-        } else {
-            breakup.style.opacity = 1;
-            triggerEmoji('💔');
+    setTimeout(()=>{
+
+        if(select.value==="yes" || qNum!=="1"){
+            hug.style.opacity=1;
+            triggerEmoji("❤️");
+        }else{
+            breakup.style.opacity=1;
+            triggerEmoji("💔");
         }
 
-        boy.style.opacity = 0;
-        girl.style.opacity = 0;
-
-        if(qNum === '1'){
-            database.ref('loveQuiz').set({ answer: select.value, timestamp: Date.now() });
+        if(qNum==='1'){
+            database.ref('loveQuiz/'+sessionId).set({
+                answer: select.value,
+                timestamp: Date.now()
+            });
         }
 
-        setTimeout(() => {
-            hug.style.opacity = 0;
-            breakup.style.opacity = 0;
+        setTimeout(()=>{
+            hug.style.opacity=0;
+            breakup.style.opacity=0;
+
             if(nextQuestion){
-                document.getElementById(`question${qNum}`).style.display = 'none';
-                document.getElementById(nextQuestion).style.display = 'block';
-            } else {
-    document.getElementById(`question${qNum}`).style.display = 'none';
-    document.getElementById("finalMessage").style.display = 'block';
-}
+                document.getElementById("question"+qNum).style.display="none";
+                document.getElementById(nextQuestion).style.display="block";
+            }else{
+                question3.style.display="none";
+                finalMessage.style.display="block";
+            }
 
-        }, 4000); // reaction stays visible for 4 seconds
+        },4000);
 
-    }, 1000);
-}
-
-function triggerEmoji(symbol) {
-    const container = document.querySelector('.container');
-    for(let i=0; i<20; i++){
-        const emoji = document.createElement('div');
-        emoji.classList.add('emoji');
-        emoji.style.left = `${50 + Math.random()*60 - 30}%`;
-        emoji.style.top = `${150 + Math.random()*20}px`;
-        emoji.style.fontSize = `${20 + Math.random()*25}px`;
-        emoji.textContent = symbol;
-        container.appendChild(emoji);
-        setTimeout(() => emoji.remove(), 2000);
-    }
+    },1000);
 }
 </script>
 
 </body>
 </html>
+
 
 
 

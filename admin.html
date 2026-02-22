@@ -33,8 +33,6 @@ h2{
 <div id="dataBox">Loading data...</div>
 
 <script>
-
-/* 🔥 SAME firebaseConfig use karo jo index.html me hai */
 const firebaseConfig = {
  apiKey:"YOUR_API_KEY",
  authDomain:"YOUR_PROJECT.firebaseapp.com",
@@ -47,7 +45,6 @@ const db = firebase.database();
 
 const dataBox = document.getElementById("dataBox");
 
-/* 🔥 REALTIME DATA LISTENER */
 db.ref("loveQuiz").on("value",(snapshot)=>{
 
   const data = snapshot.val();
